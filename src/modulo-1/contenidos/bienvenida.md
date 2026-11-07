@@ -8,7 +8,7 @@ aside: true
 
 # Bienvenida
 
-Cambio B, hecho en GitHub. 
+Te damos la bienvenida a tu nuevo curso. Esta página es un ejemplo: puedes cambiarla o borrarla cuando quieras.
 
 ## ¿Cómo empiezo?
 
@@ -20,4 +20,4 @@ Cambio B, hecho en GitHub.
 Usa los bloques de colores para destacar las ideas importantes.
 :::
 
-Esta línea viene de Studio.
+Cambio A, hecho en Studio.
