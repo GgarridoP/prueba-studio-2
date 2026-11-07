@@ -22,4 +22,4 @@ Usa los bloques de colores para destacar las ideas importantes.
 
 Cambio A, hecho en Studio.
 
-Cambio E, en GitHub.
+Cambio D, sin guardar.
