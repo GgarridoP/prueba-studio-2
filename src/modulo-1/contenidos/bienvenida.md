@@ -19,3 +19,5 @@ Te damos la bienvenida a tu nuevo curso. Esta página es un ejemplo: puedes camb
 ::: tip-box Consejo
 Usa los bloques de colores para destacar las ideas importantes.
 :::
+
+Esta línea viene de Studio.
