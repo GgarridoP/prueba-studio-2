@@ -23,3 +23,5 @@ Usa los bloques de colores para destacar las ideas importantes.
 Cambio A, hecho en Studio.
 
 Cambio D, sin guardar.
+
+Cambio H, en GitHub.
