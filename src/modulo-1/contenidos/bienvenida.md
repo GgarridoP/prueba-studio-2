@@ -8,7 +8,7 @@ aside: true
 
 # Bienvenida
 
-Te damos la bienvenida a tu nuevo curso. Esta página es un ejemplo: puedes cambiarla o borrarla cuando quieras.
+Cambio B, hecho en GitHub. 
 
 ## ¿Cómo empiezo?
 
