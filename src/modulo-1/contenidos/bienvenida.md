@@ -24,4 +24,4 @@ Cambio A, hecho en Studio.
 
 Cambio D, sin guardar.
 
-Cambio H, en GitHub.
+Cambio G, sin guardar.
