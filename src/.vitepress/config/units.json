@@ -73,11 +73,15 @@
             {
               "text": "Introducción",
               "link": "/contenidos/introduccion"
+            },
+            {
+              "text": "Diapositivas",
+              "link": "/contenidos/diapositivas"
             }
           ]
         }
       ]
     }
   },
-  "unitNavbars": {}
+  "unitNavbars": []
 }

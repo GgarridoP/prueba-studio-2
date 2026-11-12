@@ -7,6 +7,8 @@ import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client'
 import customEnhanceApp from './enhanceApp'
 import { initializeHeaderScrollController } from './js/headerScrollController'
 import { initLightbox } from './utils/lightboxManager'
+import { initNotasOrador } from './utils/notasOrador'
+import { initVideoPortadas } from './utils/videoPortada'
 import SlidesViewer from './components/SlidesViewer.vue'
 import SlidesLayout from './components/SlidesLayout.vue'
 import SidebarLogos from './components/SidebarLogos.vue'
@@ -23,8 +25,10 @@ import './css/utilities.css'
 import './css/styles.css'
 import './css/ejercicios.css'
 import './css/slides.css'
+import './css/lienzo.css'
 import './css/ejer_imgs.css'
 import './css/lightbox.css'
+import './css/notas-orador.css'
 
 // Importar componentes de slides y contenido
 import SlideBase from './components/SlideBase.vue'
@@ -101,6 +105,7 @@ export default {
 
     // 5) Inicializar el controlador del header solo en el cliente
     if (typeof window !== 'undefined') {
+      initVideoPortadas(); // Portadas de vídeo de las diapositivas libres (delegación de clics)
       let diagramCounter = 0; // Contador global para IDs únicos
 
       const initMermaid = async () => {
@@ -220,6 +225,7 @@ export default {
         }
       }, 1500);
 
+      initNotasOrador(); // ?notas: pide la frase y descifra las notas del orador
       // Escucha cambios de ruta para actualizar
       window.addEventListener('vitepress:afterRouteChanged', () => {
         setTimeout(() => {

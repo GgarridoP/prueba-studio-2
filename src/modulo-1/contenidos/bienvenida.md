@@ -6,6 +6,10 @@ outline: [2, 3]
 aside: true
 ---
 
+::: accent-box left ✨ Idea clave
+Escribe aquí el contenido.
+:::
+
 Escribe aquí el contenido.
 
 # Bienvenida
@@ -74,6 +78,14 @@ asd
 
 das
 
-::: note-box Información
+:::: note-box Información
 Escribe aquí el contenido.
+
+::: tabs
+== Pestaña 1
+Contenido de la primera pestaña.
+
+== Pestaña 2
+Contenido de la segunda pestaña.$\begin{pmatrix}\placeholder{} & \placeholder{} & \placeholder{} & \placeholder{} & 3\\ \placeholder{} & 5 & 5 & \placeholder{} & \placeholder{}\\ \placeholder{} & \placeholder{} & \placeholder{} & \placeholder{} & \placeholder{}\\ 3 & \placeholder{} & \placeholder{} & r & \placeholder{}\\ \placeholder{} & \placeholder{} & r & \placeholder{} & \placeholder{}\end{pmatrix}$
 :::
+::::

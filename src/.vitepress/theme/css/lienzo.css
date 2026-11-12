@@ -1,0 +1,358 @@
+/* ── Diapositivas libres: lienzo y cajas (config: .vitepress/lienzo.ts) ──────
+ *
+ * El lienzo es 16:9. Las cajas van en posición absoluta, en % del lienzo, y la
+ * letra en unidades de su ancho (cqw): «tam» es el tamaño sobre 1280 px, así que
+ * la proporción es la misma en cualquier pantalla.
+ *
+ * Por debajo de 560 px de ancho del lienzo (un móvil, o un zoom del 200 %) las
+ * cajas se apilan en el orden del fichero, con su alto natural y la letra de
+ * lectura normal (WCAG 1.4.4 y 1.4.10).
+ */
+
+/* Colores con nombre de las cajas: siguen la paleta del curso. */
+:root {
+  --ep-marca: var(--vp-c-brand-1);
+  --ep-texto: var(--vp-c-text-1);
+  --ep-fondo: var(--vp-c-bg);
+  --ep-exito: var(--vp-c-tip);
+  --ep-aviso: var(--vp-c-warning);
+  --ep-peligro: var(--vp-c-danger-1);
+  --ep-info: var(--vp-c-note);
+  --ep-purpura: var(--custom-accent-purple);
+  --ep-naranja: var(--custom-gradient-orange-start);
+  --ep-verdeazulado: var(--custom-accent-teal);
+}
+
+.ep-lienzo {
+  container-type: inline-size;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.ep-lienzo__area {
+  position: relative;
+  color: var(--vp-c-text-1);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--vp-c-bg-soft);
+  border-radius: 8px;
+}
+
+.ep-caja {
+  position: absolute;
+  box-sizing: border-box;
+  color: inherit;
+  font-size: calc(var(--tam, 24) / 1280 * 100cqw);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  transform-origin: center;
+}
+
+/* Los márgenes del Markdown de dentro no empujan la caja. */
+.ep-caja > :first-child { margin-top: 0; }
+.ep-caja > :last-child { margin-bottom: 0; }
+
+/* Los títulos de dentro escalan con la caja, no con la página. */
+.ep-caja h1, .ep-caja h2, .ep-caja h3, .ep-caja h4 {
+  margin: 0 0 0.3em;
+  padding: 0;
+  border: 0;
+  line-height: 1.15;
+  font-size: 1.6em;
+}
+.ep-caja h3, .ep-caja h4 { font-size: 1.25em; }
+.ep-caja p, .ep-caja li { font-size: 1em; line-height: inherit; }
+/* Márgenes en em: escalan con «tam», como la letra. */
+.ep-caja p { margin: 0.4em 0; }
+
+/* El color de la caja («color=») manda sobre el que el tema da a títulos, párrafos y negritas. */
+.ep-caja :is(h1, h2, h3, h4, h5, h6, p, li, blockquote, strong, em) { color: inherit; }
+
+.ep-caja ul, .ep-caja ol { margin: 0.3em 0; padding-left: 1.25em; }
+.ep-caja ul { list-style: disc; }
+.ep-caja ol { list-style: decimal; }
+
+/* En un lienzo las animaciones las decide «anim»: fuera la entrada y el
+   desplazamiento al pasar el ratón que el tema da a las listas de las diapositivas. */
+.ep-lienzo .ep-caja li,
+.ep-lienzo .ep-caja li:hover {
+  margin: 0.15em 0;
+  line-height: inherit;
+  animation: none;
+  transform: none;
+}
+
+.ep-caja img { max-width: 100%; }
+
+/* Una caja que solo lleva una imagen: la imagen la llena. */
+.ep-caja--imagen > p { margin: 0; height: 100%; }
+.ep-caja--imagen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--ajuste, cover);
+}
+
+/* Flechas y líneas (::: forma): el SVG llena el hueco y toma el color de «relleno». */
+.ep-forma { line-height: 0; }
+.ep-forma__svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* Dentro de <SlidesViewer>: el lienzo es la diapositiva entera, sin margen. */
+.slide.slide--lienzo { padding: 0; min-height: 0; display: block; }
+/* El lienzo no se mueve al pasar el ratón, como las demás diapositivas. */
+.slide.slide--lienzo:hover { transform: none; }
+.slide.slide--lienzo > .ep-lienzo { margin: 0; }
+
+@container (max-width: 560px) {
+  .ep-lienzo__area {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  /* Los estilos de posición van en línea: hacen falta !important para anularlos. */
+  .ep-caja {
+    position: relative !important;
+    inset: auto !important;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    /* Móvil: en una columna «deslizar» y «zoom» solo desvanecen. Desplazar o escalar
+       una caja apilada no lleva a ningún sitio, y así la columna no se mueve. */
+    translate: none !important;
+    scale: none !important;
+    z-index: 1 !important;
+    font-size: 1rem;
+  }
+
+  .ep-caja.decorativa { display: none; }
+
+  /* Una flecha que no es decorativa se queda, con sus proporciones y su volteo
+     (el giro no: en una columna no apuntaría a nada). */
+  .ep-forma {
+    width: min(100%, 12rem) !important;
+    height: auto !important;
+    aspect-ratio: var(--proporcion, 6 / 1);
+    min-height: 0.375rem;
+    transform: var(--volteo, none) !important;
+  }
+
+  /* La imagen que cubría casi todo el lienzo pasa a ser su fondo. */
+  .ep-caja.es-fondo {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 0 !important;
+    border-radius: 0;
+  }
+
+  .ep-caja--imagen:not(.es-fondo) img { height: auto; }
+}
+
+/* ── Animaciones de las cajas (`anim`, `paso`): solo en pantalla completa ──────
+ * SlideLightbox pone la clase `is-presentando` en la diapositiva, y `is-visible`
+ * en las cajas que ya han salido. En la página no hay clase: todo se ve. */
+.slide.is-presentando .ep-caja[data-anim] {
+  transition: opacity 400ms ease, translate 400ms ease, scale 400ms ease;
+}
+
+.slide.is-presentando .ep-caja[data-anim="aparecer"] {
+  transition: none;
+}
+
+.slide.is-presentando .ep-caja[data-anim]:not(.is-visible) {
+  visibility: hidden;
+}
+
+.slide.is-presentando .ep-caja[data-anim="desvanecer"]:not(.is-visible),
+.slide.is-presentando .ep-caja[data-anim="deslizar-arriba"]:not(.is-visible),
+.slide.is-presentando .ep-caja[data-anim="deslizar-izquierda"]:not(.is-visible),
+.slide.is-presentando .ep-caja[data-anim="zoom"]:not(.is-visible) {
+  opacity: 0;
+}
+
+.slide.is-presentando .ep-caja[data-anim="deslizar-arriba"]:not(.is-visible) {
+  translate: 0 4cqw;
+}
+
+.slide.is-presentando .ep-caja[data-anim="deslizar-izquierda"]:not(.is-visible) {
+  translate: 4cqw 0;
+}
+
+.slide.is-presentando .ep-caja[data-anim="zoom"]:not(.is-visible) {
+  scale: 0.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide.is-presentando .ep-caja[data-anim] {
+    transition: none;
+  }
+}
+
+/* Al imprimir se ven todas las cajas, también las que la presentación no había mostrado. */
+@media print {
+  .slide.is-presentando .ep-caja[data-anim] {
+    visibility: visible !important;
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+    transition: none !important;
+  }
+}
+
+/* Al imprimir, slides.css encoge las imágenes de las diapositivas: en un lienzo
+   cada imagen tiene que seguir llenando su caja. */
+@media print {
+  .slides-container .slide.slide--lienzo .ep-caja--imagen img {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: var(--ajuste, cover) !important;
+  }
+}
+
+/* Vídeo de YouTube (::: video): la portada no pide nada a YouTube; el reproductor
+   (youtube-nocookie.com) se carga al pulsarla (theme/utils/videoPortada.ts). */
+.ep-video { aspect-ratio: 16 / 9; }
+
+/* Gráfico de datos: la imagen (SVG de Studio) ocupa la caja; la tabla queda solo para el lector de pantalla. */
+.ep-grafico p:has(> img) { margin: 0; }
+.ep-grafico img { display: block; width: 100%; height: auto; }
+.ep-grafico table {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+/* El tema hace las tablas enfocables (tabindex): al llegar con el teclado, la tabla se ve
+   encima del gráfico, dentro de su caja (el lienzo recorta lo que se sale), con barra si no cabe. */
+.ep-grafico table:focus {
+  position: absolute !important; top: 0; left: 0; right: 0; display: block;
+  width: auto; height: auto; max-height: 100%; margin: 0;
+  overflow: auto; clip: auto; clip-path: none; white-space: normal; z-index: 5;
+  background: var(--vp-c-bg, #fff); box-shadow: 0 0.2em 0.8em rgb(0 0 0 / 0.2);
+}
+
+.ep-video__portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  margin: 0;
+  padding: 0.75em;
+  border: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #1F2937, #374151);
+  color: #FFFFFF;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.ep-video__portada:hover { background: linear-gradient(135deg, #111827, #1F2937); }
+
+.ep-video__portada:focus-visible {
+  outline: 3px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
+.ep-video__play {
+  display: grid;
+  place-items: center;
+  width: 3.2em;
+  height: 3.2em;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.ep-video__play svg { width: 55%; height: 55%; }
+
+.ep-video__titulo {
+  font-size: 0.9em;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.ep-video__reproductor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: #000;
+}
+
+.ep-video--no-valido {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--vp-c-divider);
+  border-radius: 8px;
+}
+
+.ep-video__aviso { margin: 0; padding: 0.5em; font-size: 0.9em; }
+
+/* ── Dentro de una caja, todo escala con su letra («tam») ──
+ *
+ * Los tokens del tema (design-tokens.css) van en rem: las cajas de color (InfoBox,
+ * AccentBox), el código y sus rellenos tienen 16 px o 14 px fijos aunque la caja
+ * diga tam=26 sobre un lienzo de 1400 px. Dentro de .ep-caja se redefinen en em, y se
+ * vuelven a declarar los que se calculan a partir de ellos (un custom property se
+ * resuelve donde se declara: si no, heredaría el valor ya calculado en :root).
+ */
+.ep-caja {
+  --custom-font-size-xs: 0.75em;
+  --custom-font-size-sm: 0.875em;
+  --custom-font-size-base: 1em;
+  --custom-font-size-lg: 1.125em;
+  --custom-font-size-xl: 1.25em;
+  --custom-font-size-2xl: 1.5em;
+  --custom-font-size-3xl: 1.875em;
+  --custom-font-size-4xl: 2em;
+  --custom-font-size-5xl: 2.5em;
+  --custom-space-1: 0.25em;
+  --custom-space-2: 0.5em;
+  --custom-space-3: 0.75em;
+  --custom-space-4: 1em;
+  --custom-space-5: 1.25em;
+  --custom-space-6: 1.5em;
+  --custom-space-7: 1.75em;
+  --custom-space-8: 2em;
+  --custom-space-10: 2.5em;
+  --custom-space-12: 3em;
+  --custom-component-padding-sm: var(--custom-space-3);
+  --custom-component-padding-md: var(--custom-space-4);
+  --custom-component-padding-lg: var(--custom-space-6);
+  --box-padding: var(--custom-component-padding-md);
+  --box-margin: var(--custom-space-3) 0;
+  --code-padding: 0.1em 0.3em;
+  --code-block-padding: var(--custom-space-3);
+  --table-cell-padding: var(--custom-space-2) var(--custom-space-3);
+  --list-padding-left: 1.25em;
+  --list-margin-left: 0;
+  --list-item-margin: 0.15em 0;
+}
+
+/* El código: la letra y el relleno en em (VitePress y slides.css los ponen en px). */
+.ep-caja div[class*='language-'] { margin: 0.4em 0; }
+.ep-caja div[class*='language-'] pre { padding: 0.6em 0; }
+.ep-caja div[class*='language-'] code { font-size: 0.85em; line-height: 1.5; padding: 0 0.9em; }
+.ep-caja :not(pre) > code { font-size: 0.85em; }
+
+/* Las citas y las tablas de VitePress: también en em. */
+.ep-caja blockquote { margin: 0.4em 0; padding: 0.2em 0 0.2em 0.8em; }
+.ep-caja blockquote > p { font-size: 1em; }
+.ep-caja table { margin: 0.4em 0; font-size: 0.9em; }
+.ep-caja :is(th, td) { padding: 0.3em 0.6em; }
+
+/* Las cajas de color no se mueven al pasar el ratón dentro de un lienzo (como las demás cajas). */
+.ep-lienzo .ep-caja :is(.info-box, .accent-box, .custom-block):hover { transform: none; }

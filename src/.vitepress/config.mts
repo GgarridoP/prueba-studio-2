@@ -1,8 +1,14 @@
+import { copyFileSync, existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
 import type { HeadConfig } from 'vitepress'
 import type Token from 'markdown-it/lib/token.mjs'
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs'
 import container from 'markdown-it-container'
+import { escapeTitle, lienzoContainers, notasPlugin } from './lienzo'
+import { avisoDobleDolarPlugin } from './matematicas'
+import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js'
 
 // ── Importar desde config/ ─────────────────────────────────────────────────
 // 👤 Edita los archivos de config/ para personalizar el sitio.
@@ -47,7 +53,8 @@ function createContainer(
           }
         }
         const title = raw
-        const titleAttr = title ? ` title="${title}"` : ''
+        // El título va a un atributo: sin escapar, unas comillas lo romperían.
+        const titleAttr = title ? ` title="${escapeTitle(title)}"` : ''
         const variantAttr = variant ? ` variant="${variant}"` : ''
         const alignAttr = align ? ` align="${align}"` : ''
         return `<${componentType}${variantAttr}${alignAttr}${titleAttr}>\n`
@@ -233,6 +240,10 @@ const headTags: HeadConfig[] = [
 if (COLORS.typography.fontImportUrl) {
   headTags.push(['link', { rel: 'stylesheet', href: COLORS.typography.fontImportUrl }])
 }
+// Fuentes copiadas al curso (las que elige EduPress Studio): solo si el curso las tiene.
+if (existsSync(fileURLToPath(new URL('../public/fonts/fonts.css', import.meta.url)))) {
+  headTags.push(['link', { rel: 'stylesheet', href: `${basePath}fonts/fonts.css` }])
+}
 
 // ── Pre-extraer contenedores Markdown ────────────────────────────────────────
 const infoBoxContainer    = createContainer('info-box',    'InfoBox', 'info')
@@ -278,7 +289,7 @@ const accentBoxContainer: [typeof container, string, { render(tokens: Token[], i
         }
       }
       const title = raw
-      const titleAttr = title ? ` title="${title}"` : ''
+      const titleAttr = title ? ` title="${escapeTitle(title)}"` : ''
       const alignAttr = align ? ` align="${align}"` : ''
       return `<AccentBox gradient="${gradient}"${alignAttr}${titleAttr}>\n`
     } else {
@@ -287,11 +298,32 @@ const accentBoxContainer: [typeof container, string, { render(tokens: Token[], i
   }
 }]
 
+// En `vitepress dev` no hay build que copie notas.json: el middleware lo sirve desde config/.
+const notasEnDesarrollo = {
+  name: 'edupress-notas-dev',
+  configureServer(server: { middlewares: { use(fn: (req: { url?: string }, res: any, next: () => void) => void): void } }) {
+    server.middlewares.use((req, res, next) => {
+      if ((req.url ?? '').split('?')[0] !== `${basePath}notas.json`) return next()
+      const origen = fileURLToPath(new URL('./config/notas.json', import.meta.url))
+      if (!existsSync(origen)) return next()
+      res.setHeader('Content-Type', 'application/json')
+      res.end(readFileSync(origen))
+    })
+  },
+}
+
 // ── Exportar configuración VitePress ───────────────────────────────────────
 export default defineConfig({
   base:   basePath,
   outDir: PROJECT.outDir,
+  // Las notas cifradas (config/notas.json, de EduPress Studio) se copian a la raíz del
+  // sitio para la página ?notas. Solo llevan la sal, las vueltas y la llave envuelta.
+  buildEnd(siteConfig) {
+    const origen = fileURLToPath(new URL('./config/notas.json', import.meta.url))
+    if (existsSync(origen)) copyFileSync(origen, join(siteConfig.outDir, 'notas.json'))
+  },
   vite: {
+    plugins: [notasEnDesarrollo],
     build: {
       // El proyecto incluye bundles grandes (Mermaid/slides); elevamos el umbral
       // para evitar ruido en CI sin alterar el resultado de compilación.
@@ -307,6 +339,9 @@ export default defineConfig({
     },
   },
   markdown: {
+    // Ecuaciones con $…$ y $$…$$ (MathJax, con markdown-it-mathjax3 en devDependencies).
+    // Sin los paquetes html y action: \href{javascript:…}, \class, \style y \cssId.
+    math: { tex: { packages: AllPackages.filter((p: string) => p !== 'html' && p !== 'action') } },
     config(md) {
       md.use(tabsMarkdownPlugin)
       md.use(...infoBoxContainer)
@@ -315,6 +350,10 @@ export default defineConfig({
       md.use(...tipBoxContainer)
       md.use(...noteBoxContainer)
       md.use(...accentBoxContainer)
+      // Diapositivas libres (lienzo.ts y theme/css/lienzo.css).
+      for (const plugin of lienzoContainers(basePath)) md.use(...plugin)
+      md.use(notasPlugin)
+      md.use(avisoDobleDolarPlugin)
     }
   },
   head: headTags,
