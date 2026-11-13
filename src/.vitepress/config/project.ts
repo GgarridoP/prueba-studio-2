@@ -31,12 +31,12 @@ export const PROJECT = {
   // DESCRIPCIÓN DEL SITIO
   // --------------------------------------------------------------------------
   // Aparece en los metadatos SEO y como subtítulo en buscadores.
-  description: 'prueba-studio-2',
+  description: 'EduPress — Plantilla modular para VitePress',
 
   // --------------------------------------------------------------------------
   // COPYRIGHT (pie de página)
   // --------------------------------------------------------------------------
-  copyright: 'Copyright © 2026 GgarridoP',
+  copyright: 'Copyright © 2026',
   
   // --------------------------------------------------------------------------
   // LICENCIA (pie de página)
@@ -71,7 +71,7 @@ export const PROJECT = {
   // Iconos disponibles: 'github', 'twitter', 'gitlab', 'discord', 'youtube', etc.
   // Deja el array vacío [] si no quieres mostrar ningún enlace social.
   socialLinks: [
-    { icon: 'github', link: 'https://github.com/GgarridoP' },
+    { icon: 'github', link: 'https://github.com/GGEdu' },
   ] as DefaultTheme.SocialLink[],
 
   // --------------------------------------------------------------------------
